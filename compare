@@ -1,0 +1,26 @@
+#!/bin/bash
+
+cd grammar
+echo "Generating Parser from reference Grammar ..."
+echo ""
+java -jar ../lib/antlr-4.0-complete.jar -package com.grammarcomp.parser -o ../src/com/grammarcomp/parser -no-listener Fsmlp.g4
+echo "Generating Parser for Grammar files ..."
+echo ""
+java -jar ../lib/antlr-4.0-complete.jar -package com.grammarcomp.mutation -o ../src/com/grammarcomp/mutation -no-listener -visitor GFour.g4
+
+cd .. 
+
+echo "Create output directory ..."
+echo ""
+mkdir -p out
+
+echo "Build ..."
+echo ""
+javac -d out -sourcepath src -cp lib/antlr-4.0-complete.jar src/com/grammarcomp/parser/*.java
+javac -d out -sourcepath src -cp lib/antlr-4.0-complete.jar src/com/grammarcomp/generation/*.java
+javac -d out -sourcepath src -cp lib/antlr-4.0-complete.jar src/com/grammarcomp/mutation/*.java
+javac -d out -sourcepath src -cp lib/antlr-4.0-complete.jar src/com/grammarcomp/*.java
+
+echo "Run Main ..."
+echo ""
+java -cp "out:lib/antlr-4.0-complete.jar" com.grammarcomp.Main
